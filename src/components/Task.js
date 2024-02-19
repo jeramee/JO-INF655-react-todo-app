@@ -1,9 +1,16 @@
 // Task.js
-
-import React from 'react';
+import React, { useState } from 'react';
 import './Task.css';
 
-const Task = ({ description, completed, onToggleComplete, onDelete }) => {
+const Task = ({ id, description, completed, onToggleComplete, onDelete, onEdit }) => {
+  const [isEditing, setEditing] = useState(false);
+  const [editedDescription, setEditedDescription] = useState(description);
+
+  const handleSaveEdit = () => {
+    onEdit(id, editedDescription);
+    setEditing(false);
+  };
+
   return (
     <div className={`task ${completed ? 'completed' : ''}`}>
       <input
@@ -11,7 +18,23 @@ const Task = ({ description, completed, onToggleComplete, onDelete }) => {
         checked={completed}
         onChange={onToggleComplete}
       />
-      <span>{description}</span>
+      {isEditing ? (
+        <input
+          type="text"
+          value={editedDescription}
+          onChange={(e) => setEditedDescription(e.target.value)}
+        />
+      ) : (
+        <span>{description}</span>
+      )}
+      {isEditing ? (
+        <>
+          <button onClick={handleSaveEdit}>Save</button>
+          <button onClick={() => setEditing(false)}>Cancel</button>
+        </>
+      ) : (
+        <button onClick={() => setEditing(true)}>Edit</button>
+      )}
       <button onClick={onDelete}>X</button>
     </div>
   );

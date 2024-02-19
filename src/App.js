@@ -1,14 +1,18 @@
-// App.js
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Task from './components/Task';
 import TaskInputForm from './components/TaskInputForm';
 
 const App = () => {
-  const [tasks, setTasks] = useState([]);
+  const [tasks, setTasks] = useState(JSON.parse(localStorage.getItem('tasks')) || []);
 
   const handleAddTask = (newTask) => {
-    setTasks([...tasks, newTask]);
+    setTasks([...tasks, { ...newTask, onEdit: handleEditTask }]);
+  };
+
+  const handleEditTask = (index, newDescription) => {
+    const updatedTasks = [...tasks];
+    updatedTasks[index].description = newDescription;
+    setTasks(updatedTasks);
   };
 
   const handleToggleComplete = (index) => {
@@ -23,6 +27,10 @@ const App = () => {
     setTasks(updatedTasks);
   };
 
+  useEffect(() => {
+    localStorage.setItem('tasks', JSON.stringify(tasks));
+  }, [tasks]);
+
   return (
     <div className="App">
       <TaskInputForm onAddTask={handleAddTask} />
@@ -30,10 +38,12 @@ const App = () => {
         {tasks.map((task, index) => (
           <Task
             key={index}
+            id={index}  // Add id prop to uniquely identify each task
             description={task.description}
             completed={task.completed}
             onToggleComplete={() => handleToggleComplete(index)}
             onDelete={() => handleDeleteTask(index)}
+            onEdit={handleEditTask}
           />
         ))}
       </div>
