@@ -1,0 +1,12 @@
+/* Task.css */
+
+.task {
+    display: flex;
+    align-items: center;
+    margin: 8px;
+  }
+  
+  .completed {
+    text-decoration: line-through;
+  }
+  
